@@ -43,7 +43,7 @@ class ProbsAlgo:
     def precision(true_labels: List[int], predictions: List[int], class_number: int) -> float:
         tp = [int(i == j == class_number) for i, j in zip(true_labels, predictions)]
         tp_fp = [int(i == class_number) for i in predictions]
-        if sum(tp_fp) == 0:
+        if sum(tp) == 0:
             return 0  # Zero predicted labels of this class
         return sum(tp) / sum(tp_fp)
 
@@ -55,7 +55,7 @@ class ProbsAlgo:
             return 1  # Zero true labels of this class
         return sum(tp) / sum(tp_fn)
 
-    def get_final_metrics(self):
+    def get_final_metrics(self) -> Dict[str, List[float]]:
         final_metrics = dict()
         accuracy = []
         precision0, precision1, precision2 = [], [], []
