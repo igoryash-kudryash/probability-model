@@ -1,6 +1,5 @@
 import argparse
 from algorithm import ProbsAlgo
-from typing import List
 
 
 def get_args():
