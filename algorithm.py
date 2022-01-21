@@ -56,7 +56,6 @@ class ProbsAlgo:
         return sum(tp) / sum(tp_fn)
 
     def get_final_metrics(self) -> Dict[str, List[float]]:
-        final_metrics = dict()
         accuracy = []
         precision0, precision1, precision2 = [], [], []
         recall0, recall1, recall2 = [], [], []
