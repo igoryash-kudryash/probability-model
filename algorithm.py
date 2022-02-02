@@ -108,18 +108,16 @@ class ProbsAlgo:
             return sum(tp) / s
 
     @staticmethod
-    def prefix_sum(lst: List[float]) -> List[float]:
+    def cumulative_average(lst: List[float]) -> List[float]:
         """
 
         :param lst: list of values
         :return: cumulative average
         """
-        pr_sum = [lst[0]]
+        cum_avg = [lst[0]]
         for i in range(1, len(lst)):
-            pr_sum.append(pr_sum[i - 1] + lst[i])
-        for i in range(len(pr_sum)):
-            pr_sum[i] /= (i + 1)
-        return pr_sum
+            cum_avg.append((cum_avg[i - 1] * i + lst[i]) / (i + 1))
+        return cum_avg
 
     def get_final_metrics(self) -> Dict[str, List[float]]:
         """
@@ -140,13 +138,13 @@ class ProbsAlgo:
             final_metrics['recall2'].append(self.recall(self.true_labels, self.preds[i], 2))
 
         return dict({
-            'accuracy': self.prefix_sum(final_metrics['accuracy']),
-            'precision0': self.prefix_sum(final_metrics['precision0']),
-            'precision1': self.prefix_sum(final_metrics['precision1']),
-            'precision2': self.prefix_sum(final_metrics['precision2']),
-            'recall0': self.prefix_sum(final_metrics['recall0']),
-            'recall1': self.prefix_sum(final_metrics['recall1']),
-            'recall2': self.prefix_sum(final_metrics['recall2'])
+            'accuracy': self.cumulative_average(final_metrics['accuracy']),
+            'precision0': self.cumulative_average(final_metrics['precision0']),
+            'precision1': self.cumulative_average(final_metrics['precision1']),
+            'precision2': self.cumulative_average(final_metrics['precision2']),
+            'recall0': self.cumulative_average(final_metrics['recall0']),
+            'recall1': self.cumulative_average(final_metrics['recall1']),
+            'recall2': self.cumulative_average(final_metrics['recall2'])
         })
 
     def plot_and_save_result(self, output_path: str) -> None:
