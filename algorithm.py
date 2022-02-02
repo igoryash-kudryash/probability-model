@@ -18,8 +18,7 @@ class ProbsAlgo:
     @staticmethod
     def read_file(path_to_data: str) -> List[int]:
         with open(path_to_data, newline='') as csvfile:
-            line = csvfile.readlines()
-            labels = [int(row[0]) for row in line]
+            labels = [int(i) for i in csvfile]
         return labels
 
     def make_predictions(self) -> List[List[int]]:
@@ -37,22 +36,29 @@ class ProbsAlgo:
 
     @staticmethod
     def accuracy(true_labels: List[int], predictions: List[int]) -> float:
-        res = [i == j for i, j in zip(true_labels, predictions)]
-        return sum(res) / len(res)
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
+        res = (i == j for i, j in zip(true_labels, predictions))
+        return sum(res) / len(true_labels)
 
     @staticmethod
     def precision(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fp = (i == class_number for i in predictions)
         s = sum(tp)
 
-        # можно оставить були
-        # можно сделать генератор вместо списка [] -> ()
-        # generator comprehension
+        # assert добавить в recall
+        # почитать про генераторы
+        # документация функции в """ - - - """
+        # написать генератор вместо списка, который возвращает флоат
+        # в get_final_metrics список list(self(...)))
 
-        # Создать новую ветку buf fixes
-        # В ней сделать все правки, коммитить, пушить
-        # Замержить из этой ветки изменения в мастер
+        # не создавать в ретерне новый словарь, а применить функцию к готовым значениями
+        # в get_final_metrics
+
+        # иду по списку - запоминаю сумму в предыдщую сумму
+
+        # сделать проверку, что путь до даты - адекватная вещь через raise Exception
 
         if s == 0:
             return 0  # Zero predicted labels of this class
@@ -61,6 +67,7 @@ class ProbsAlgo:
 
     @staticmethod
     def recall(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fn = (i == class_number for i in true_labels)
         s = sum(tp_fn)
