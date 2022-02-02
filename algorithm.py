@@ -17,6 +17,11 @@ class ProbsAlgo:
 
     @staticmethod
     def read_file(path_to_data: str) -> List[int]:
+        """
+
+        :param path_to_data: path to the data containing true labels
+        :return: true labels
+        """
         if not os.path.isfile(path_to_data):
             raise FileNotFoundError
         with open(path_to_data, newline='') as csvfile:
@@ -24,6 +29,10 @@ class ProbsAlgo:
         return labels
 
     def make_predictions(self) -> List[List[int]]:
+        """
+
+        :return: predictions of the model
+        """
         predictions = []
         for i in range(self.n_iter):
             pred = []
@@ -38,12 +47,25 @@ class ProbsAlgo:
 
     @staticmethod
     def accuracy(true_labels: List[int], predictions: List[int]) -> float:
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :return: accuracy
+        """
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         res = (i == j for i, j in zip(true_labels, predictions))
         return sum(res) / len(true_labels)
 
     @staticmethod
     def precision(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :param class_number: number of class
+        :return: precision for class_number
+        """
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fp = (i == class_number for i in predictions)
@@ -69,6 +91,13 @@ class ProbsAlgo:
 
     @staticmethod
     def recall(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :param class_number: number of class
+        :return: recall for class_number
+        """
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fn = (i == class_number for i in true_labels)
@@ -80,6 +109,11 @@ class ProbsAlgo:
 
     @staticmethod
     def prefix_sum(lst: List[float]) -> List[float]:
+        """
+
+        :param lst: list of values
+        :return: cumulative average
+        """
         pr_sum = [lst[0]]
         for i in range(1, len(lst)):
             pr_sum.append(pr_sum[i - 1] + lst[i])
@@ -88,6 +122,10 @@ class ProbsAlgo:
         return pr_sum
 
     def get_final_metrics(self) -> Dict[str, List[float]]:
+        """
+
+        :return: dict of final metrics
+        """
         final_metrics = defaultdict(list)
 
         for i in range(self.n_iter):
@@ -112,6 +150,11 @@ class ProbsAlgo:
         })
 
     def plot_and_save_result(self, output_path: str) -> None:
+        """
+
+        :param output_path: path to the output image
+        :return: None
+        """
         fig, ax = plt.subplots(7, 1, figsize=(8, 18))
         fig.tight_layout()
         plt.rcParams['axes.grid'] = True
