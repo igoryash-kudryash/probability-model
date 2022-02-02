@@ -1,8 +1,8 @@
 from typing import List, Dict
 from random import choices
-import csv
 import matplotlib.pyplot as plt
 from collections import defaultdict
+import os
 
 
 class ProbsAlgo:
@@ -17,12 +17,22 @@ class ProbsAlgo:
 
     @staticmethod
     def read_file(path_to_data: str) -> List[int]:
+        """
+
+        :param path_to_data: path to the data containing true labels
+        :return: true labels
+        """
+        if not os.path.isfile(path_to_data):
+            raise FileNotFoundError
         with open(path_to_data, newline='') as csvfile:
-            line = csvfile.readlines()
-            labels = [int(row[0]) for row in line]
+            labels = [int(i) for i in csvfile]
         return labels
 
     def make_predictions(self) -> List[List[int]]:
+        """
+
+        :return: predictions of the model
+        """
         predictions = []
         for i in range(self.n_iter):
             pred = []
@@ -37,22 +47,42 @@ class ProbsAlgo:
 
     @staticmethod
     def accuracy(true_labels: List[int], predictions: List[int]) -> float:
-        res = [i == j for i, j in zip(true_labels, predictions)]
-        return sum(res) / len(res)
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :return: accuracy
+        """
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
+        res = (i == j for i, j in zip(true_labels, predictions))
+        return sum(res) / len(true_labels)
 
     @staticmethod
     def precision(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :param class_number: number of class
+        :return: precision for class_number
+        """
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fp = (i == class_number for i in predictions)
         s = sum(tp)
 
-        # можно оставить були
-        # можно сделать генератор вместо списка [] -> ()
-        # generator comprehension
+        # assert добавить в recall
+        # почитать про генераторы
+        # документация функции в """ - - - """
+        # написать генератор вместо списка, который возвращает флоат
+        # в get_final_metrics список list(self(...)))
 
-        # Создать новую ветку buf fixes
-        # В ней сделать все правки, коммитить, пушить
-        # Замержить из этой ветки изменения в мастер
+        # не создавать в ретерне новый словарь, а применить функцию к готовым значениями
+        # в get_final_metrics
+
+        # иду по списку - запоминаю сумму в предыдщую сумму
+
+        # сделать проверку, что путь до даты - адекватная вещь через raise Exception
 
         if s == 0:
             return 0  # Zero predicted labels of this class
@@ -61,6 +91,14 @@ class ProbsAlgo:
 
     @staticmethod
     def recall(true_labels: List[int], predictions: List[int], class_number: int) -> float:
+        """
+
+        :param true_labels: list of true labels
+        :param predictions: list of predicted labels
+        :param class_number: number of class
+        :return: recall for class_number
+        """
+        assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fn = (i == class_number for i in true_labels)
         s = sum(tp_fn)
@@ -70,15 +108,22 @@ class ProbsAlgo:
             return sum(tp) / s
 
     @staticmethod
-    def prefix_sum(lst: List[float]) -> List[float]:
-        pr_sum = [lst[0]]
+    def cumulative_average(lst: List[float]) -> List[float]:
+        """
+
+        :param lst: list of values
+        :return: cumulative average
+        """
+        cum_avg = [lst[0]]
         for i in range(1, len(lst)):
-            pr_sum.append(pr_sum[i - 1] + lst[i])
-        for i in range(len(pr_sum)):
-            pr_sum[i] /= (i + 1)
-        return pr_sum
+            cum_avg.append((cum_avg[i - 1] * i + lst[i]) / (i + 1))
+        return cum_avg
 
     def get_final_metrics(self) -> Dict[str, List[float]]:
+        """
+
+        :return: dict of final metrics
+        """
         final_metrics = defaultdict(list)
 
         for i in range(self.n_iter):
@@ -93,16 +138,21 @@ class ProbsAlgo:
             final_metrics['recall2'].append(self.recall(self.true_labels, self.preds[i], 2))
 
         return dict({
-            'accuracy': self.prefix_sum(final_metrics['accuracy']),
-            'precision0': self.prefix_sum(final_metrics['precision0']),
-            'precision1': self.prefix_sum(final_metrics['precision1']),
-            'precision2': self.prefix_sum(final_metrics['precision2']),
-            'recall0': self.prefix_sum(final_metrics['recall0']),
-            'recall1': self.prefix_sum(final_metrics['recall1']),
-            'recall2': self.prefix_sum(final_metrics['recall2'])
+            'accuracy': self.cumulative_average(final_metrics['accuracy']),
+            'precision0': self.cumulative_average(final_metrics['precision0']),
+            'precision1': self.cumulative_average(final_metrics['precision1']),
+            'precision2': self.cumulative_average(final_metrics['precision2']),
+            'recall0': self.cumulative_average(final_metrics['recall0']),
+            'recall1': self.cumulative_average(final_metrics['recall1']),
+            'recall2': self.cumulative_average(final_metrics['recall2'])
         })
 
     def plot_and_save_result(self, output_path: str) -> None:
+        """
+
+        :param output_path: path to the output image
+        :return: None
+        """
         fig, ax = plt.subplots(7, 1, figsize=(8, 18))
         fig.tight_layout()
         plt.rcParams['axes.grid'] = True
