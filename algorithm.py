@@ -1,8 +1,8 @@
 from typing import List, Dict
 from random import choices
-import csv
 import matplotlib.pyplot as plt
 from collections import defaultdict
+import os
 
 
 class ProbsAlgo:
@@ -17,6 +17,8 @@ class ProbsAlgo:
 
     @staticmethod
     def read_file(path_to_data: str) -> List[int]:
+        if not os.path.isfile(path_to_data):
+            raise FileNotFoundError
         with open(path_to_data, newline='') as csvfile:
             labels = [int(i) for i in csvfile]
         return labels
