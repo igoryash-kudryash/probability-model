@@ -53,6 +53,7 @@ class ProbsAlgo:
         :param predictions: list of predicted labels
         :return: accuracy
         """
+        assert len(true_labels) != 0, 'Empty list of true labels'
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         res = (i == j for i, j in zip(true_labels, predictions))
         return sum(res) / len(true_labels)
@@ -66,6 +67,7 @@ class ProbsAlgo:
         :param class_number: number of class
         :return: precision for class_number
         """
+        assert len(true_labels) != 0, 'Empty list of true labels'
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fp = (i == class_number for i in predictions)
@@ -85,6 +87,7 @@ class ProbsAlgo:
         :param class_number: number of class
         :return: recall for class_number
         """
+        assert len(true_labels) != 0, 'Empty list of true labels'
         assert len(true_labels) == len(predictions), 'Sizes of true labels and predictions do not match'
         tp = (i == j == class_number for i, j in zip(true_labels, predictions))
         tp_fn = (i == class_number for i in true_labels)
