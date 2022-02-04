@@ -71,8 +71,6 @@ class ProbsAlgo:
         tp_fp = (i == class_number for i in predictions)
         s = sum(tp)
 
-        # почитать про генераторы
-
         if s == 0:
             return 0  # Zero predicted labels of this class
         else:
