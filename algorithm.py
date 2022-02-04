@@ -124,7 +124,10 @@ class ProbsAlgo:
             final_metrics['recall1'].append(self.recall(self.true_labels, self.preds[i], 1))
             final_metrics['recall2'].append(self.recall(self.true_labels, self.preds[i], 2))
 
-        return dict((metric, self.cumulative_average(value)) for metric, value in final_metrics.items())
+        for key, value in final_metrics.items():
+            final_metrics[key] = self.cumulative_average(value)
+
+        return final_metrics
 
     def plot_and_save_result(self, output_path: str) -> None:
         """
@@ -132,43 +135,36 @@ class ProbsAlgo:
         :param output_path: path to the output image
         :return: None
         """
-        fig, ax = plt.subplots(7, 1, figsize=(8, 18))
-        fig.tight_layout()
+        fig, ax = plt.subplots(7, 1, figsize=(12, 20))
         plt.rcParams['axes.grid'] = True
+        plt.subplots_adjust(hspace=0.4)
 
         ax[0].plot(range(1, self.n_iter + 1), self.metrics['accuracy'])
         ax[0].set_title('Accuracy')
         ax[0].grid()
-        ax[0].set_ylim([-0.05, 1.05])
 
         ax[1].plot(range(1, self.n_iter + 1), self.metrics['precision0'])
         ax[1].set_title('Precision for class 0')
         ax[1].grid()
-        ax[1].set_ylim([-0.05, 1.05])
 
         ax[2].plot(range(1, self.n_iter + 1), self.metrics['precision1'])
         ax[2].set_title('Precision for class 1')
         ax[2].grid()
-        ax[2].set_ylim([-0.05, 1.05])
 
         ax[3].plot(range(1, self.n_iter + 1), self.metrics['precision2'])
         ax[3].set_title('Precision for class 2')
         ax[3].grid()
-        ax[3].set_ylim([-0.05, 1.05])
 
         ax[4].plot(range(1, self.n_iter + 1), self.metrics['recall0'])
         ax[4].set_title('Recall for class 0')
         ax[4].grid()
-        ax[4].set_ylim([-0.05, 1.05])
 
         ax[5].plot(range(1, self.n_iter + 1), self.metrics['recall1'])
         ax[5].set_title('Recall for class 1')
         ax[5].grid()
-        ax[5].set_ylim([-0.05, 1.05])
 
         ax[6].plot(range(1, self.n_iter + 1), self.metrics['recall2'])
         ax[6].set_title('Recall for class 2')
         ax[6].grid()
-        ax[6].set_ylim([-0.05, 1.05])
 
         fig.savefig(output_path)
