@@ -71,18 +71,7 @@ class ProbsAlgo:
         tp_fp = (i == class_number for i in predictions)
         s = sum(tp)
 
-        # assert добавить в recall
         # почитать про генераторы
-        # документация функции в """ - - - """
-        # написать генератор вместо списка, который возвращает флоат
-        # в get_final_metrics список list(self(...)))
-
-        # не создавать в ретерне новый словарь, а применить функцию к готовым значениями
-        # в get_final_metrics
-
-        # иду по списку - запоминаю сумму в предыдщую сумму
-
-        # сделать проверку, что путь до даты - адекватная вещь через raise Exception
 
         if s == 0:
             return 0  # Zero predicted labels of this class
@@ -137,15 +126,7 @@ class ProbsAlgo:
             final_metrics['recall1'].append(self.recall(self.true_labels, self.preds[i], 1))
             final_metrics['recall2'].append(self.recall(self.true_labels, self.preds[i], 2))
 
-        return dict({
-            'accuracy': self.cumulative_average(final_metrics['accuracy']),
-            'precision0': self.cumulative_average(final_metrics['precision0']),
-            'precision1': self.cumulative_average(final_metrics['precision1']),
-            'precision2': self.cumulative_average(final_metrics['precision2']),
-            'recall0': self.cumulative_average(final_metrics['recall0']),
-            'recall1': self.cumulative_average(final_metrics['recall1']),
-            'recall2': self.cumulative_average(final_metrics['recall2'])
-        })
+        return dict((metric, self.cumulative_average(value)) for metric, value in final_metrics.items())
 
     def plot_and_save_result(self, output_path: str) -> None:
         """
